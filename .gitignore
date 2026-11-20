@@ -21,3 +21,7 @@
 /.history-source/
 /.commit-backup/
 /.git-preparation/
+
+# Local planning notes and milestone evidence
+/MILESTONE-*.md
+/FUTURE-SCOPE.md

@@ -162,7 +162,7 @@ export async function POST(request: NextRequest) {
       .withTts(
         new MurfTTS({
           key: murfApiKey,
-          voiceId: 'Matthew',
+          voiceId: 'Miles',
           baseUrl: 'wss://global.api.murf.ai/v1/speech/stream-input',
           locale: 'en-US',
           rate: 0,

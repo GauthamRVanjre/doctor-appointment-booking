@@ -96,3 +96,9 @@ Re-audit security docs when any of these change:
 
 - [conversation_lifecycle.md](L2/conversation_lifecycle.md) — Token issuance and renewal sequence details.
 - [transcript_pipeline.md](L2/transcript_pipeline.md) — RTM event surfaces and error propagation boundaries.
+
+## Milestone 3 approval and storage boundary
+
+Booking writes fail closed without exact conversation/slot/alias approval. No LLM approved flag accepted. Approval capture is not yet connected; do not expose internal approve methods to model calls. Two-minute pending memory is process-local and restart-invalidated. Persist only fixed fictional alias, slot, hashed conversation/approval, retry hashes/key and booking metadata. Never store concern text/audio/transcript. SQLite uniqueness and BEGIN IMMEDIATE prevent duplicate reservations; exact retries survive restart. Spoken consent limitations and trust requirements: ../../booking-contract.md.
+
+Emergency lookup with trusted conversation context clears approval and blocks further selection/booking until session teardown or service restart. Direct India emergency messaging uses 112 for ambulance assistance; keyword detection is not medical triage. Milestone 4 must supply context consistently and wire emergency turn handling. See ../../booking-contract.md.

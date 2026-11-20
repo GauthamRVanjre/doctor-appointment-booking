@@ -4,7 +4,7 @@
 
 This fork now uses Deepgram STT → OpenAI LLM → **Murf Falcon TTS**. The original quickstart instructions below describe upstream defaults; this section overrides their no-vendor-key assumption.
 
-Fill `MURF_API_KEY` in `.env.local` locally (server-only). Agora project credentials remain unchanged. Never paste keys into chat. The initial voice is `Matthew`, locale `en-US`, model `FALCON`, sample rate 24000, using the documented streaming endpoint. No additional npm dependency or tunnel is needed for TTS: Agora connects to Murf. Missing Murf credentials fail agent startup explicitly; there is no silent MiniMax fallback.
+Fill `MURF_API_KEY` in `.env.local` locally (server-only). Agora project credentials remain unchanged. Never paste keys into chat. The initial voice is `Miles`, locale `en-US`, model `FALCON`, sample rate 24000, using the documented streaming endpoint. No additional npm dependency or tunnel is needed for TTS: Agora connects to Murf. Missing Murf credentials fail agent startup explicitly; there is no silent MiniMax fallback.
 
 Restart `pnpm dev` after entering the key, then start a new conversation. Verify you hear the greeting and a relevant spoken reply to your own speech, with both transcript sides visible. A provider label or successful build is not proof of Murf audio. Existing Ada persona remains during this isolated provider milestone; booking tools follow later.
 
@@ -209,3 +209,11 @@ Please do **not** open public issues for security reports. Email security@agora.
 ## License
 
 Released under the [MIT License](./LICENSE).
+
+## Local booking tools (Milestone 3)
+
+Server-only booking service lives in lib/booking/. Exact schema, tool inputs, approval boundary and limitations: [booking contract](docs/booking-contract.md). Uses Node 24.10+ built-in SQLite (experimental in this runtime), no ORM or extra package. Default ignored database: data/clinic.sqlite. Only fictional aliases are accepted. Run pnpm run verify:booking; pnpm run verify includes this check.
+
+The voice agent still uses the starter persona. Booking tools are not exposed over HTTP or connected to Agora yet. Milestone 4 must establish trusted session identity and explicit approval capture before exposing writes. Local disk and approval memory require a single persistent Node process; the upstream Vercel instructions do not apply to this booking store.
+
+Obvious emergencies take the emergency-redirection path, not routine scheduling. India messaging uses 112 for ambulance assistance. Trusted conversation context latches a booking stop and clears pending approval; voice integration of this behavior remains Milestone 4. See the booking contract for limitations.

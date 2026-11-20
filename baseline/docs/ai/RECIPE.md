@@ -83,3 +83,7 @@ Do not recreate Agora ConvoAI integration from memory. Provider schemas, SDK bui
 3. Run `pnpm run doctor` and `pnpm run dev`.
 4. Validate with `pnpm run verify` before sharing modifications.
 5. Customize agent behavior and UI using the supported surfaces above.
+
+## Fork extension: Milestone 3
+
+Internal lib/booking service adds two-table local SQLite scheduling without changing baseline routes or client invariants. Booking tool and approval contracts are in ../booking-contract.md. Not wired to Agora; no network exposure. Requires Node 24.10+ local persistent process. Run pnpm run verify:booking as part of verify.

@@ -360,7 +360,7 @@ async function verifyInviteAgentSuccess() {
     if (capturedTts?.vendor === 'murf') {
       assert(capturedTts.params.model === 'FALCON', 'Murf must use Falcon');
       assert(capturedTts.params.api_key === 'test-murf-key', 'Murf key must reach the server SDK');
-      assert(capturedTts.params.voiceId === 'Matthew', 'Use the documented initial voice');
+      assert(capturedTts.params.voiceId === 'Miles', 'Use the selected customer-support voice');
       assert(capturedTts.params.sample_rate === 24000, 'Murf sample rate must be 24 kHz');
     }
     assert(!JSON.stringify(body).includes('test-murf-key'), 'Invite response must not expose the Murf key');

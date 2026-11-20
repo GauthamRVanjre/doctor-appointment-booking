@@ -101,3 +101,7 @@ From `types/conversation.ts` (high-use):
 
 - [conversation_lifecycle.md](L2/conversation_lifecycle.md) — How route contracts are used in sequence.
 - [transcript_pipeline.md](L2/transcript_pipeline.md) — Event-level contract mapping.
+
+## Milestone 3 internal tool contract
+
+BookingService exposes find_doctors, get_available_slots and book_appointment (unknown input, structured success/failure). Trusted conversation context is a separate argument. prepare_selection and ApprovalStore.approve are internal approval seams, not LLM tools or HTTP endpoints. Exact request/schema/readback/retry contracts: ../../booking-contract.md. No public route contracts changed.

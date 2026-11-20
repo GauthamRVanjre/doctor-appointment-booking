@@ -1,6 +1,6 @@
 # 02 Architecture
 
-Fork update 2026-11-20: the TTS stage is now Murf Falcon (Matthew, en-US, 24 kHz), configured using `MurfTTS` and server-only `MURF_API_KEY`. Agora calls Murf directly; the Next.js server configures it. MiniMax references below describe upstream architecture. Token/RTC/RTM/lifecycle ownership is unchanged.
+Fork update 2026-11-20: the TTS stage is now Murf Falcon (Miles, en-US, 24 kHz), configured using `MurfTTS` and server-only `MURF_API_KEY`. Agora calls Murf directly; the Next.js server configures it. MiniMax references below describe upstream architecture. Token/RTC/RTM/lifecycle ownership is unchanged.
 
 > Runtime architecture for browser RTC/RTM, Next.js route handlers, and Agora managed agent session.
 
@@ -103,3 +103,7 @@ Agora Cloud
 
 - [conversation_lifecycle.md](L2/conversation_lifecycle.md) — Detailed bootstrapping and teardown timeline.
 - [transcript_pipeline.md](L2/transcript_pipeline.md) — Event mapping, UID remap, in-progress/completed segmentation.
+
+## Milestone 3 local booking service
+
+lib/booking/service.ts owns directory lookup, seven-day schedule materialization and atomic SQLite reservations. config.ts owns fictional clinic data and Asia/Kolkata rules; approval.ts owns two-minute in-memory pending approval. See ../../booking-contract.md for exact two-table schema. No routes, agent tools, UI or lifecycle wiring added. Requires Node 24.10+ and persistent local disk; not compatible with stateless Vercel deployment as written.

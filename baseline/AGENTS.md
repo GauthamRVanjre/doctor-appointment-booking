@@ -2,7 +2,7 @@
 
 ## Hackathon fork override (2026-11-20)
 
-Milestone 2 replaces MiniMax with SDK `MurfTTS`: model `FALCON`, voice `Matthew`, locale `en-US`, 24000 Hz. `MURF_API_KEY` is required server-side in addition to the two Agora variables. The UI label reflects configured Murf, not proof of runtime audio. Keep lifecycle/token code unchanged; the user explicitly declined starter shutdown fixes. Keep two SQLite tables (slots/bookings) for later milestones, with doctor config and temporary in-memory approval. See ../FUTURE-SCOPE.md when preparing the deck. Upstream default-provider instructions below are historical where they conflict with this override.
+Milestone 2 replaces MiniMax with SDK `MurfTTS`: model `FALCON`, voice `Miles`, locale `en-US`, 24000 Hz. `MURF_API_KEY` is required server-side in addition to the two Agora variables. The UI label reflects configured Murf, not proof of runtime audio. Keep lifecycle/token code unchanged; the user explicitly declined starter shutdown fixes. Keep two SQLite tables (slots/bookings) for later milestones, with doctor config and temporary in-memory approval. See ../FUTURE-SCOPE.md when preparing the deck. Upstream default-provider instructions below are historical where they conflict with this override.
 
 This guide is for coding agents making changes in `agent-quickstart-nextjs`.
 
@@ -224,3 +224,7 @@ Before finishing a change:
 | fix docs        | Close findings from a docs review or test run                |
 
 The generator and tester live in the [AgoraIO-Community/ai-devkit](https://github.com/AgoraIO-Community/ai-devkit) skill set. See the [progressive disclosure standard](https://github.com/AgoraIO-Community/ai-devkit/blob/main/docs/progressive-disclosure-standard.md) for the full specification.
+
+## Milestone 3 booking boundary
+
+Read docs/booking-contract.md before changing lib/booking/. Two tables only; Node 24.10+ node:sqlite, no ORM. Run pnpm run verify:booking and pnpm run verify. Tools remain server-only and unwired; approval-store methods are trusted internal seams, never model tools. Do not expose writes before Milestone 4 establishes session identity and approval evidence. Preserve starter lifecycle and Miles changes.

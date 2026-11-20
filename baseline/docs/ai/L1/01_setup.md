@@ -6,7 +6,7 @@ Fork update 2026-11-20: set server-only `MURF_API_KEY` in `.env.local` for Murf 
 
 ## Runtime Requirements
 
-- Node.js `>=22` (`package.json` engines field).
+- Node.js `>=24.10.0` (`package.json` engines field; local SQLite booking runtime).
 - `pnpm` package manager.
 - Agora CLI (`agora`) for project binding and environment bootstrap.
 - Agora project with Conversational AI enabled.

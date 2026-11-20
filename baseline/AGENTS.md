@@ -1,5 +1,9 @@
 # Agent Development Guide
 
+## Hackathon fork override (2026-11-20)
+
+Milestone 2 replaces MiniMax with SDK `MurfTTS`: model `FALCON`, voice `Matthew`, locale `en-US`, 24000 Hz. `MURF_API_KEY` is required server-side in addition to the two Agora variables. The UI label reflects configured Murf, not proof of runtime audio. Keep lifecycle/token code unchanged; the user explicitly declined starter shutdown fixes. Keep two SQLite tables (slots/bookings) for later milestones, with doctor config and temporary in-memory approval. See ../FUTURE-SCOPE.md when preparing the deck. Upstream default-provider instructions below are historical where they conflict with this override.
+
 This guide is for coding agents making changes in `agent-quickstart-nextjs`.
 
 ## How to Load

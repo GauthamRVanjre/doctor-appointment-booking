@@ -5,7 +5,7 @@ import {
   Area,
   DeepgramSTT,
   ExpiresIn,
-  MiniMaxTTS,
+  MurfTTS,
   OpenAI,
 } from 'agora-agents';
 import { ClientStartRequest, AgentResponse } from '@/types/conversation';
@@ -69,6 +69,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const murfApiKey = requireEnv('MURF_API_KEY');
+
     // --- 2. Build and start the agent ---
 
     // AgoraClient authenticates API calls to the Agora Conversational AI service.
@@ -79,8 +81,7 @@ export async function POST(request: NextRequest) {
       appCertificate,
     });
 
-    // Pipeline: Deepgram (reseller) STT → OpenAI (reseller) LLM → MiniMax (reseller) TTS.
-    // Omit vendor API keys for supported models — AgentKit infers reseller presets on start (see Agora Console / billing).
+    // Deepgram and OpenAI remain managed; Murf Falcon uses a server-only key.
     const agent = new Agent({
       client,
       instructions: ADA_PROMPT,
@@ -159,9 +160,15 @@ export async function POST(request: NextRequest) {
         // }),
       )
       .withTts(
-        new MiniMaxTTS({
-          model: 'speech_2_6_turbo',
-          voiceId: 'English_captivating_female1',
+        new MurfTTS({
+          key: murfApiKey,
+          voiceId: 'Matthew',
+          baseUrl: 'wss://global.api.murf.ai/v1/speech/stream-input',
+          locale: 'en-US',
+          rate: 0,
+          pitch: 0,
+          model: 'FALCON',
+          sampleRate: 24000,
         }),
         // BYOK — ElevenLabs (set NEXT_ELEVENLABS_API_KEY; optional NEXT_ELEVENLABS_VOICE_ID)
         // new (await import('agora-agents')).ElevenLabsTTS({

@@ -20,6 +20,8 @@ stable_contracts:
 
 # Quickstart Recipe Profile
 
+Hackathon fork override (2026-11-20): the active pipeline uses Murf Falcon rather than MiniMax, and env.required now also includes server-only `MURF_API_KEY`. Original baseline lifecycle and RTC/RTM invariants remain intact. The two-credential contract described below is upstream history.
+
 This repo is a reusable quickstart sample for building browser voice-agent experiences with Agora Conversational AI Engine.
 
 ## Recipe Role

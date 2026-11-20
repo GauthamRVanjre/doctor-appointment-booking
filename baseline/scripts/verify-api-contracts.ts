@@ -14,6 +14,7 @@ function getJson(response: Response) {
 
 process.env.NEXT_PUBLIC_AGORA_APP_ID = '0123456789abcdef0123456789abcdef';
 process.env.NEXT_AGORA_APP_CERTIFICATE = 'fedcba9876543210fedcba9876543210';
+process.env.MURF_API_KEY = 'test-murf-key';
 
 async function verifyGenerateAgoraTokenRoute() {
   const { GET: generateAgoraToken } =
@@ -313,6 +314,12 @@ async function verifyInviteAgentValidation() {
 async function verifyInviteAgentSuccess() {
   const { POST: inviteAgent } = await import('../app/api/invite-agent/route');
   const originalCreateSession = Agent.prototype.createSession;
+  const originalWithTts = Agent.prototype.withTts;
+  let capturedTts: ReturnType<Parameters<typeof originalWithTts>[0]['toConfig']> | undefined;
+  Agent.prototype.withTts = function (tts) {
+    capturedTts = tts.toConfig();
+    return originalWithTts.call(this, tts);
+  };
   let capturedSessionConfig: {
     channel?: string;
     agentUid?: string;
@@ -349,6 +356,14 @@ async function verifyInviteAgentSuccess() {
       body.agent_id === 'mock-agent-id',
       'POST /api/invite-agent should return the started agent id',
     );
+    assert(capturedTts?.vendor === 'murf', 'Invite must configure Murf, not the starter TTS');
+    if (capturedTts?.vendor === 'murf') {
+      assert(capturedTts.params.model === 'FALCON', 'Murf must use Falcon');
+      assert(capturedTts.params.api_key === 'test-murf-key', 'Murf key must reach the server SDK');
+      assert(capturedTts.params.voiceId === 'Matthew', 'Use the documented initial voice');
+      assert(capturedTts.params.sample_rate === 24000, 'Murf sample rate must be 24 kHz');
+    }
+    assert(!JSON.stringify(body).includes('test-murf-key'), 'Invite response must not expose the Murf key');
     assert(
       body.state === 'RUNNING',
       'POST /api/invite-agent should return RUNNING state',
@@ -378,6 +393,25 @@ async function verifyInviteAgentSuccess() {
     );
   } finally {
     Agent.prototype.createSession = originalCreateSession;
+    Agent.prototype.withTts = originalWithTts;
+  }
+}
+
+async function verifyInviteMissingMurfKey() {
+  const { POST: inviteAgent } = await import('../app/api/invite-agent/route');
+  const originalKey = process.env.MURF_API_KEY;
+  delete process.env.MURF_API_KEY;
+  try {
+    const response = await inviteAgent(new NextRequest('http://localhost:3000/api/invite-agent', {
+      method: 'POST',
+      body: JSON.stringify({ requester_id: 'user-4321', channel_name: 'test-channel' }),
+    }));
+    const body = await getJson(response);
+    assert(response.status === 500, 'Missing Murf key must prevent agent startup');
+    assert(body.error === 'Missing required environment variable: MURF_API_KEY', 'Explain missing Murf setup');
+  } finally {
+    if (originalKey === undefined) delete process.env.MURF_API_KEY;
+    else process.env.MURF_API_KEY = originalKey;
   }
 }
 
@@ -453,6 +487,7 @@ async function main() {
   await verifyChatCompletionsSseDone();
   await verifyInviteAgentValidation();
   await verifyInviteAgentSuccess();
+  await verifyInviteMissingMurfKey();
   await verifyStopConversationValidation();
   await verifyStopConversationSuccess();
 

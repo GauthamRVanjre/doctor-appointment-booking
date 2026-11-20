@@ -1,5 +1,15 @@
 # Agora Conversational AI Next.js Quickstart
 
+## Hackathon fork: Milestone 2
+
+This fork now uses Deepgram STT → OpenAI LLM → **Murf Falcon TTS**. The original quickstart instructions below describe upstream defaults; this section overrides their no-vendor-key assumption.
+
+Fill `MURF_API_KEY` in `.env.local` locally (server-only). Agora project credentials remain unchanged. Never paste keys into chat. The initial voice is `Matthew`, locale `en-US`, model `FALCON`, sample rate 24000, using the documented streaming endpoint. No additional npm dependency or tunnel is needed for TTS: Agora connects to Murf. Missing Murf credentials fail agent startup explicitly; there is no silent MiniMax fallback.
+
+Restart `pnpm dev` after entering the key, then start a new conversation. Verify you hear the greeting and a relevant spoken reply to your own speech, with both transcript sides visible. A provider label or successful build is not proof of Murf audio. Existing Ada persona remains during this isolated provider milestone; booking tools follow later.
+
+Official configuration: [Murf through Agora](https://docs.agora.io/en/ai/models/tts/murf). Starter End Conversation behavior remains unchanged at the user's request. If End fails, refresh/close the call page to release browser media; cloud shutdown must still be verified separately.
+
 [![Build](https://github.com/AgoraIO-Conversational-AI/agent-quickstart-nextjs/actions/workflows/build-check.yml/badge.svg)](https://github.com/AgoraIO-Conversational-AI/agent-quickstart-nextjs/actions/workflows/build-check.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D22-brightgreen)](https://nodejs.org/)

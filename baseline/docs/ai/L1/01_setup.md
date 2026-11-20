@@ -1,5 +1,7 @@
 # 01 Setup
 
+Fork update 2026-11-20: set server-only `MURF_API_KEY` in `.env.local` for Murf Falcon. The upstream two-variable/no-vendor-key setup below is no longer sufficient to start this fork's agent. Local doctor still checks the original Agora prerequisites; a pass does not verify Murf credentials or audio. Restart dev after setting the key.
+
 > Environment setup, commands, and safe verification flow for this quickstart.
 
 ## Runtime Requirements

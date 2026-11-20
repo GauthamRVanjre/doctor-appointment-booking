@@ -1,5 +1,7 @@
 # 02 Architecture
 
+Fork update 2026-11-20: the TTS stage is now Murf Falcon (Matthew, en-US, 24 kHz), configured using `MurfTTS` and server-only `MURF_API_KEY`. Agora calls Murf directly; the Next.js server configures it. MiniMax references below describe upstream architecture. Token/RTC/RTM/lifecycle ownership is unchanged.
+
 > Runtime architecture for browser RTC/RTM, Next.js route handlers, and Agora managed agent session.
 
 ## High-Level Shape

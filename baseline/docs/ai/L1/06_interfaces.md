@@ -1,5 +1,7 @@
 # 06 Interfaces
 
+Fork update 2026-11-20: invite requires server-only `MURF_API_KEY`. Missing key returns HTTP 500 with its variable name, never its value. Successful invite response shape is unchanged. TTS configuration uses documented `MurfTTS` fields; no new browser-facing key is introduced.
+
 > Contracts at repo boundaries: API routes, env vars, runtime events, and shared TypeScript payloads.
 
 ## HTTP Route Contracts

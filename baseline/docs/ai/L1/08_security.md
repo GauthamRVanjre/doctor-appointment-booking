@@ -1,5 +1,7 @@
 # 08 Security
 
+Fork update 2026-11-20: `MURF_API_KEY` is a required server-only provider credential. Never prefix it NEXT_PUBLIC, return it in API responses, print it, or place it in screenshots. Keep local `.env.local` excluded from source control. Contract checks use a fake key and assert it is not returned.
+
 > Security model, trust boundaries, secret handling, and safety controls for this quickstart.
 
 ## Trust Boundaries

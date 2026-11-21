@@ -448,6 +448,10 @@ async function verifyStopConversationValidation() {
 }
 
 async function verifyStopConversationSuccess() {
+  const { voiceSessions } = await import('../lib/booking/voice-session');
+  const sessions = voiceSessions();
+  const owned = await sessions.create('test-stop','123');
+  await sessions.attach(owned,'mock-agent-id',async () => ({ agent_id: 'mock-agent-id',contents: [] }),async () => {});
   const { POST: stopConversation } =
     await import('../app/api/stop-conversation/route');
   const originalStopAgent = AgoraClient.prototype.stopAgent;
@@ -466,6 +470,7 @@ async function verifyStopConversationSuccess() {
       {
         body: JSON.stringify({ agent_id: 'mock-agent-id' }),
         method: 'POST',
+        headers: { Cookie: `clinic_session=${owned.browserToken}` },
       },
     );
     const response = await stopConversation(request);

@@ -2,6 +2,10 @@ Milestone 4 extension: [voice-to-action.md](voice-to-action.md) specifies the im
 
 # Milestone 3: local booking contract
 
+Deployment extension approved 2026-11-21: see [Postgres contract](postgres-contract.md).
+DATABASE_URL selects the three-table Postgres implementation with durable session
+authority. The two-table SQLite contract below remains the local fallback.
+
 Agreed two-table design, specified before implementation (2026-11-20).
 Server-only TypeScript tools; no HTTP exposure or Agora wiring in this milestone.
 

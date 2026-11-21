@@ -4,7 +4,8 @@ import { VoiceSessions } from '../lib/booking/voice-session';
 import { bookingTools } from '../lib/booking/tools';
 import { POST as toolRoute } from '../app/api/booking/tools/route';
 import { GET as stateRoute, POST as confirmationRoute } from '../app/api/booking/session/route';
-import { localRequest } from '../lib/booking/http';
+import { localRequest, sessionCookie, bookingHandler } from '../lib/booking/http';
+import { bootstrapCookie, ownsBootstrap, demoEnabled } from '../lib/booking/demo-access';
 
 async function main() {
 const now = new Date('2026-11-20T08:00:00Z');
@@ -93,6 +94,35 @@ try {
   assert.equal(code(await sessions.confirm(other, reference)), 'HISTORY_UNAVAILABLE');
   sessions.attach(other, 'agent-two', async () => ({ agent_id: 'wrong-agent', contents: [] }), async () => {});
   assert.equal(code(await sessions.state(other)), 'HISTORY_UNAVAILABLE');
+  const oldOrigin = process.env.BOOKING_APP_ORIGIN;
+  const oldSecret = process.env.BOOKING_APPROVAL_SECRET;
+  const oldDemo = process.env.BOOKING_PUBLIC_DEMO;
+  try {
+    process.env.BOOKING_APP_ORIGIN = 'https://clinic.example.test';
+    process.env.BOOKING_APPROVAL_SECRET = 'synthetic-test-secret-with-at-least-32-characters';
+    const ownedCookie = bootstrapCookie('owned-channel','123').split(';')[0];
+    const ownedRequest = new Request('https://clinic.example.test/api/invite-agent',{ method: 'POST',headers: { Cookie: ownedCookie,Origin: 'https://clinic.example.test' } });
+    assert.equal(ownsBootstrap(ownedRequest,'owned-channel','123'),true);
+    assert.equal(ownsBootstrap(ownedRequest,'other-channel','123'),false);
+    assert.equal(ownsBootstrap(ownedRequest,'owned-channel','456'),false);
+    assert.equal(ownsBootstrap(new Request('https://clinic.example.test'),'owned-channel','123'),false);
+    delete process.env.BOOKING_PUBLIC_DEMO;
+    assert.equal(demoEnabled(ownedRequest),false);
+    process.env.BOOKING_PUBLIC_DEMO = 'true';
+    assert.equal(demoEnabled(ownedRequest),true);
+    assert.equal(localRequest(new Request('https://clinic.example.test/api/booking/session',{ method: 'POST' })),false);
+    assert.equal(localRequest(new Request('https://clinic.example.test/api/booking/session',{ method: 'POST',headers: { Origin: 'https://evil.test' } })),false);
+    assert.equal(localRequest(new Request('https://clinic.example.test/api/booking/session',{ method: 'POST',headers: { Origin: 'https://clinic.example.test' } })),true);
+    assert.ok(sessionCookie('test').includes('; Secure'));
+    const unavailable = await bookingHandler(async () => { throw new Error('private connection details'); })(new Request('https://clinic.example.test'));
+    assert.equal(unavailable.status,503);
+    assert.equal((await unavailable.text()).includes('private connection'),false);
+  } finally {
+    if (oldOrigin === undefined) delete process.env.BOOKING_APP_ORIGIN;
+    else process.env.BOOKING_APP_ORIGIN = oldOrigin;
+    if (oldSecret===undefined) delete process.env.BOOKING_APPROVAL_SECRET; else process.env.BOOKING_APPROVAL_SECRET = oldSecret;
+    if (oldDemo===undefined) delete process.env.BOOKING_PUBLIC_DEMO; else process.env.BOOKING_PUBLIC_DEMO = oldDemo;
+  }
   console.log('Voice boundary checks passed: tool/session isolation, unavailable recovery, model rejection, on-screen approval, commit/speech ordering, retries, emergency, cleanup and fail-closed history. No live voice claim.');
 } finally { booking.close(); }
 

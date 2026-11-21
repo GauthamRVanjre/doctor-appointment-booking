@@ -1,5 +1,24 @@
 # Milestone 4 implementation and runtime gate
 
+Public-demo release preparation: BOOKING_PUBLIC_DEMO must explicitly enable
+deployed token/invite routes. Signed browser bootstrap cookies bind channel and
+UID, and a shared Postgres advisory lock caps starts at 10/hour and two active
+sessions. Channel replay is rejected. Failed starts still consume hourly budget.
+The Vercel project is created, but no deployment or live voice result is implied.
+
+2026-11-21 deployment extension: routes select durable Supabase Postgres when
+DATABASE_URL is configured. BOOKING_APPROVAL_SECRET signs references without
+storing usable references. Session capabilities are stored hashed; approval,
+expiry and emergency authority are shared across instances. History/speech API
+clients are rebuilt using stored agent/channel identity and server credentials.
+Database revision checks prevent stale history replacing new authority. Booking
+and session saved state commit together before confirmation speech.
+BOOKING_APP_ORIGIN enables trusted HTTPS-origin checks and Secure cookies.
+Stopping now requires cookie-bound ownership. SQLite remains a local fallback
+only without DATABASE_URL. Automated real-Postgres checks mock Agora access;
+live voice and public abuse controls remain before deployment. Historical local
+implementation notes below describe the fallback.
+
 Implemented locally on 2026-11-20. Live Agora tool execution and voice behavior
 remain unverified until a tools-only HTTPS tunnel is authorized and tested.
 No deployment or public exposure is implied by this implementation.

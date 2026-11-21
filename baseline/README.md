@@ -93,16 +93,47 @@ The default local file is `data/clinic.sqlite`, ignored by Git. It contains only
 slots and saved bookings; no symptoms, transcripts, audio or real patient identity.
 Only Demo Patient and Demo Guest aliases are accepted.
 
-Pending approval and session authority currently live in a single Node process.
-Restarting invalidates that temporary state; saved bookings survive on local disk.
+Without DATABASE_URL, pending approval lives in one process and saved bookings
+survive on local disk. With DATABASE_URL, bookings and session authority live in
+Postgres and survive new application processes until their database expiry.
 History checks can lag speech. Emergency keyword checks are conservative, not
 medical triage. Existing starter media teardown still needs real-session validation.
 
-**Deployment is pending.** Vercel + Supabase Free is selected, but the current
-SQLite/process-memory implementation is not suitable for Vercel Functions as-is.
-The Postgres/shared-session migration must be implemented and verified first.
+**Deployment is pending.** Supabase storage/session integration is implemented;
+public agent-start abuse controls and deployed runtime verification remain gates.
 Do not treat upstream Next.js deployment defaults as a working deployment of
 this booking service.
+
+### Postgres migration progress
+
+The dedicated Supabase project `demo-care-clinic` is hosted in Mumbai
+(`ap-south-1`) with the agreed three-table schema. When DATABASE_URL is set,
+routes use lib/booking/postgres.ts and lib/booking/postgres-voice.ts. Set a stable
+server-only BOOKING_APPROVAL_SECRET of at least 32 random characters. Browser and
+tool capability hashes, expiry, pending review and emergency stops are durable.
+Authenticated Agora history/speech access is reconstructed per invocation.
+No SDK object, transcript or raw capability is saved. A failed database request
+never falls back to SQLite. Vercel requires DATABASE_URL.
+
+For deployment, BOOKING_APP_ORIGIN must be the exact trusted HTTPS origin with
+no trailing slash; browser mutations require a matching Origin and cookies are
+Secure. Set BOOKING_TOOLS_BASE_URL to the deployed origin when releasing.
+Public startup is disabled unless BOOKING_PUBLIC_DEMO=true. Deployed token/invite
+requests require a trusted origin and a signed HttpOnly bootstrap cookie binding
+the channel and user. A Postgres advisory lock coordinates limits across instances:
+10 starts per rolling hour, at most two active sessions, and one start per channel.
+Failed starts count against the hourly budget. These are global demo limits, so
+a busy demo can intentionally return HTTP 429; they are not patient authentication.
+Vercel functions are configured for Mumbai (bom1) in vercel.json, near the database.
+
+For opt-in database integration checks, put the server-only transaction-pooler
+URI in `DATABASE_URL` in the ignored `.env.local`, then run `pnpm run verify:postgres`.
+No browser Supabase key is required. This test creates synthetic session/booking
+rows and removes only its own rows afterward; it does not reset demo bookings.
+It materializes current schedule slots. Run against the dedicated demo project.
+Database integration is separate from `verify` and requires real connectivity.
+See [the Postgres contract](docs/postgres-contract.md) and
+[the hosted schema snapshot](docs/hosted-schema.sql).
 
 ## Design references and attribution
 

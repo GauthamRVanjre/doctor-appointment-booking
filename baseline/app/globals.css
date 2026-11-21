@@ -79,63 +79,6 @@
   --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
-
-    /* --- Agora dark token set --- */
-
-    --background:       220 14% 5%;
-    --surface:          220 12% 9%;
-    --surface-elevated: 220 10% 13%;
-
-    --card:             220 12% 9%;
-    --card-foreground:  220 15% 95%;
-    --popover:          220 10% 13%;
-    --popover-foreground: 220 15% 95%;
-    --muted:            220 12% 9%;
-
-    --border:           220 10% 18%;
-    --input:            220 10% 18%;
-
-    --foreground:       220 15% 95%;
-    --muted-foreground: 220 10% 50%;
-
-    --primary:            194 100% 50%;
-    --primary-foreground: 220 14% 5%;
-
-    --secondary:            220 10% 13%;
-    --secondary-foreground: 220 15% 95%;
-
-    --accent:            194 100% 50%;
-    --accent-foreground: 220 14% 5%;
-
-    --destructive:            0 72% 58%;
-    --destructive-foreground: 0 0% 100%;
-
-    --ring: 194 100% 50%;
-
-    --chart-1: 194 100% 50%;
-    --chart-2: 220 10% 60%;
-    --chart-3: 220 10% 40%;
-    --chart-4: 0 72% 58%;
-    --chart-5: 150 60% 45%;
-
-    --sidebar-background:         220 12% 9%;
-    --sidebar-foreground:         220 15% 95%;
-    --sidebar-primary:            194 100% 50%;
-    --sidebar-primary-foreground: 220 14% 5%;
-    --sidebar-accent:             220 10% 13%;
-    --sidebar-accent-foreground:  220 15% 95%;
-    --sidebar-border:             220 10% 18%;
-    --sidebar-ring:               194 100% 50%;
-
-    /* Agent visualizer accent ramp used by the current conversation UI. */
-    --viz-stop-1: 194 100% 58%;
-    --viz-stop-2: 215 42% 72%;
-    --viz-stop-3: 272 62% 72%;
-  }
-}
 
 body {
   font-family: var(--font-sans);
@@ -192,3 +135,24 @@ body {
     max-height: 3.5rem;
   }
 }
+
+/* Approved clinic palette stays light across OS preferences. */
+:root {
+ --background: 50 23% 96%; --foreground: 176 55% 16%;
+ --card: 48 33% 99%; --card-foreground: 176 55% 16%;
+ --popover: 48 33% 99%; --popover-foreground: 176 55% 16%;
+ --surface: 145 25% 94%; --surface-elevated: 145 25% 91%;
+ --primary: 169 65% 27%; --primary-foreground: 0 0% 100%;
+ --secondary: 145 27% 90%; --secondary-foreground: 176 55% 16%;
+ --muted: 145 20% 93%; --muted-foreground: 173 16% 35%;
+ --border: 157 15% 78%; --input: 157 15% 78%;
+ --accent: 145 27% 90%; --accent-foreground: 176 55% 16%;
+ --ring: 169 65% 27%; --radius: 0.85rem;
+}
+body { background-image: radial-gradient(ellipse at 95% 5%, #dceee180, transparent 55%); }
+.care-orb { border-radius: 50%; background: radial-gradient(circle at 38% 33%, #ecfff1 0%, #a4e7c6 32%, #79ccaf 54%, #dcefe580 72%); box-shadow: 0 0 55px 8px #a9e8c33b, inset 0 0 35px #ffffff80; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; scroll-behavior: auto !important; } }
+
+@font-face { font-family: Manrope; font-style: normal; font-weight: 400 500; font-display: swap; src: url('/fonts/manrope-regular.ttf') format('truetype'); }
+@font-face { font-family: Manrope; font-style: normal; font-weight: 600 800; font-display: swap; src: url('/fonts/manrope-bold.ttf') format('truetype'); }
+:root { --font-sans: Manrope, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }

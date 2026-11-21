@@ -1,13 +1,11 @@
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { BookingService } from './service';
-import { PostgresVoiceSessions } from './postgres-voice';
-import { postgresStore } from './postgres';
 
 type History = { agent_id?: string; contents?: { role?: string; content?: string }[] };
 type Saved = Extract<ReturnType<BookingService['book_appointment']>, { ok: true }>;
 type Selection = { doctor_id: string; slot_id: string; demo_alias: string };
 type Pending = Selection & { approval_reference: string; readback: string; expires_at: string; idempotency_key: string; userHash: string };
-export type Session = {
+type Session = {
   id: string; browserToken: string; toolToken: string; expiresAt: number; ended: boolean;
   agentId?: string; history?: () => Promise<History>; say?: (text: string) => Promise<void>;
   pending?: Pending; saved?: Saved; savedReference?: string; emergency?: string; notice?: string;
@@ -25,8 +23,7 @@ export class VoiceSessions {
   private sessions = new Map<string, Session>();
   constructor(readonly booking: BookingService, private clock = () => Date.now()) {}
 
-  create(channel?: string, requesterUid?: string) {
-    void channel; void requesterUid;
+  create() {
     this.prune();
     const session: Session = { id: randomUUID(), browserToken: randomBytes(32).toString('hex'),
       toolToken: randomBytes(32).toString('hex'), expiresAt: this.clock() + 3_600_000,
@@ -149,11 +146,6 @@ export class VoiceSessions {
 }
 
 const shared = globalThis as typeof globalThis & { clinicVoiceSessions?: VoiceSessions };
-let postgres: PostgresVoiceSessions | undefined;
 export function voiceSessions() {
-  if (process.env.DATABASE_URL) {
-    return postgres ??= new PostgresVoiceSessions(postgresStore(),process.env.BOOKING_APPROVAL_SECRET ?? '');
-  }
-  if (process.env.VERCEL && !process.env.DATABASE_URL) throw new Error('DATABASE_URL required on Vercel');
   return shared.clinicVoiceSessions ??= new VoiceSessions(new BookingService());
 }

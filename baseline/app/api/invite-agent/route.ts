@@ -13,9 +13,8 @@ import { DEFAULT_AGENT_UID } from '@/lib/agora';
 
 import { voiceSessions } from '@/lib/booking/voice-session';
 import { bookingTools, toolsBaseUrl } from '@/lib/booking/tools';
-import { sessionCookie, localRequest, browserSession } from '@/lib/booking/http';
+import { COOKIE, localRequest, browserSession } from '@/lib/booking/http';
 import { localDate, addDays } from '@/lib/booking/config';
-import { demoEnabled, ownsBootstrap } from '@/lib/booking/demo-access';
 
 export const runtime = 'nodejs';
 const CLINIC_PROMPT = `You are the fictional Demo Care Clinic scheduling assistant for Dr. Ramesh, a general physician. This is a demo using only Demo Patient or Demo Guest aliases. Do not ask for real identity. Never diagnose, give medical advice or promise emergency care.
@@ -35,15 +34,13 @@ function requireEnv(name: string): string {
 }
 
 export async function POST(request: NextRequest) {
-  let bookingSession: Awaited<ReturnType<ReturnType<typeof voiceSessions>['create']>> | undefined;
+  let bookingSession: ReturnType<ReturnType<typeof voiceSessions>['create']> | undefined;
   try {
     if (!localRequest(request)) return NextResponse.json({ error: 'Local access only.' }, { status: 403 });
-    if (!demoEnabled(request)) return NextResponse.json({ error: 'Public demo is disabled.' },{ status: 403 });
     // --- 1. Parse request ---
 
     const body: ClientStartRequest = await request.json();
     const { requester_id, channel_name } = body;
-    if (!ownsBootstrap(request,channel_name,requester_id)) return NextResponse.json({ error: 'Start a new owned browser session.' },{ status: 403 });
 
     // Validate required env vars on first request so misconfiguration surfaces
     // with a clear error message rather than a silent failure.
@@ -59,9 +56,9 @@ export async function POST(request: NextRequest) {
 
     const murfApiKey = requireEnv('MURF_API_KEY');
     const baseUrl = toolsBaseUrl();
-    const old = await browserSession(request);
-    if (old) await voiceSessions().end(old);
-    bookingSession = await voiceSessions().create(channel_name,requester_id);
+    const old = browserSession(request);
+    if (old) voiceSessions().end(old);
+    bookingSession = voiceSessions().create();
 
     // --- 2. Build and start the agent ---
 
@@ -183,27 +180,22 @@ export async function POST(request: NextRequest) {
     });
 
     const agentId = await session.start();
-    try {
-      await voiceSessions().attach(bookingSession, agentId, () => session.getHistory(), text => session.say(text, { priority: 'INTERRUPT', interruptable: false }));
-    } catch (error) {
-      await client.stopAgent(agentId).catch(() => {});
-      throw error;
-    }
+    voiceSessions().attach(bookingSession, agentId, () => session.getHistory(), text => session.say(text, { priority: 'INTERRUPT', interruptable: false }));
 
     return NextResponse.json({
       agent_id: agentId,
       create_ts: Math.floor(Date.now() / 1000),
       state: 'RUNNING',
-    } as AgentResponse, { headers: { 'Set-Cookie': sessionCookie(bookingSession.browserToken) } });
+    } as AgentResponse, { headers: { 'Set-Cookie': `${COOKIE}=${bookingSession.browserToken}; HttpOnly; SameSite=Strict; Path=/api; Max-Age=3600` } });
   } catch (error) {
-    if (bookingSession) { try { await voiceSessions().end(bookingSession); } catch { /* No success returned. */ } }
-    console.error('Conversation start failed.');
-    if (error instanceof Error && error.message==='DEMO_START_LIMIT') return NextResponse.json({ error: 'Demo start limit reached. Please try later.' },{ status: 429 });
+    if (bookingSession) voiceSessions().end(bookingSession);
+    console.error('Error starting conversation:', error);
     return NextResponse.json(
       {
         error:
-          error instanceof Error && error.message.startsWith('Missing required environment variable:')
-            ? error.message : 'Failed to start conversation',
+          error instanceof Error
+            ? error.message
+            : 'Failed to start conversation',
       },
       { status: 500 },
     );

@@ -1,76 +1,11 @@
-'use client';
-
+ 'use client';
 import type { ReactNode } from 'react';
-import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { BookingCard } from './BookingCard';
-
-type QuickstartConversationLayoutProps = {
-  statusPanel: ReactNode;
-  pipelineMetrics: ReactNode;
-  transcriptPanel: ReactNode;
-  visualizer: ReactNode;
-  controls: ReactNode;
-  onEndConversation: () => void;
-};
-
-export function QuickstartConversationLayout({
-  statusPanel,
-  pipelineMetrics,
-  transcriptPanel,
-  visualizer,
-  controls,
-  onEndConversation,
-}: QuickstartConversationLayoutProps) {
-  return (
-    <div className="flex min-h-0 flex-1 flex-col text-left">
-      <header className="flex shrink-0 flex-col gap-4 border-b border-border px-4 py-4 md:h-[76px] md:flex-row md:items-center md:justify-between md:px-6 md:py-0">
-        <div className="flex min-w-0 items-center gap-3">
-          <Image
-            src="/agora-logo-mark.svg"
-            alt="Agora"
-            width={40}
-            height={40}
-            className="h-10 w-10 shrink-0 object-contain"
-          />
-          <div className="flex min-w-0 flex-col justify-center gap-1">
-            <span className="truncate text-lg font-semibold leading-none tracking-[-0.025em] text-foreground">
-              Demo Care Clinic
-            </span>
-            {pipelineMetrics}
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 md:pr-1">
-          {statusPanel}
-          <Button
-            variant="destructive"
-            size="sm"
-            className="h-8 rounded-md border border-destructive bg-transparent px-3 text-xs font-medium text-destructive hover:bg-destructive/10"
-            onClick={onEndConversation}
-            aria-label="End conversation with AI agent"
-            title="End conversation"
-          >
-            End Conversation
-          </Button>
-        </div>
-      </header>
-
-      <div className="flex min-h-0 w-full flex-1 flex-col gap-4 px-4 pb-4 pt-4 md:px-6 lg:flex-row lg:gap-0">
-        <aside className="order-2 h-64 min-h-0 w-full shrink-0 lg:order-1 lg:h-full lg:w-[26rem]">
-          {transcriptPanel}
-        </aside>
-
-        <main className="order-1 flex min-h-0 flex-1 flex-col lg:order-2 lg:border-l lg:border-border/80 lg:pl-6">
-          <div className="flex min-h-0 flex-1 flex-col pb-2 pt-3 md:pb-6">
-            <div className="flex min-h-0 flex-1 items-center justify-center">
-              {visualizer}
-            </div>
-            <BookingCard />
-            <div className="shrink-0 pt-4">{controls}</div>
-          </div>
-        </main>
-      </div>
-    </div>
-  );
+import { ClinicBrand } from './ClinicBrand';
+type Props = { statusPanel: ReactNode; pipelineMetrics: ReactNode; transcriptPanel: ReactNode; visualizer: ReactNode; controls: ReactNode; onEndConversation: () => void };
+export function QuickstartConversationLayout({statusPanel,pipelineMetrics,transcriptPanel,visualizer,controls,onEndConversation}: Props) {
+ return <div className="mx-auto flex min-h-0 w-full max-w-[1600px] flex-1 flex-col text-left"><header className="flex shrink-0 flex-wrap items-center justify-between gap-4 border-b border-border px-5 py-5 sm:px-8"><ClinicBrand/><div className="flex items-center gap-5">{statusPanel}<Button variant="outline" size="sm" className="rounded-full border-primary/40 text-foreground hover:bg-destructive/10 hover:text-destructive" onClick={onEndConversation}>End conversation</Button></div></header>
+ <main className="grid min-h-0 flex-1 grid-cols-1 gap-5 overflow-y-auto p-4 sm:p-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:overflow-hidden"><div className="flex min-h-0 flex-col gap-4"><div className="h-[52dvh] min-h-72 lg:h-auto lg:min-h-0 lg:flex-1">{transcriptPanel}</div><div className="shrink-0">{controls}</div></div><aside className="min-h-0 space-y-4 lg:overflow-y-auto"><BookingCard/><details className="rounded-xl border border-border bg-card/50 p-4 text-xs text-muted-foreground"><summary className="cursor-pointer font-medium">Connection performance</summary><div className="pt-3">{pipelineMetrics}</div></details></aside></main>
+ {/* RemoteUser audio remains mounted inside this presentation slot. */}<div hidden>{visualizer}</div></div>;
 }

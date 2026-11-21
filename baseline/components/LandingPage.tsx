@@ -212,7 +212,7 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="relative flex h-dvh min-h-screen flex-col overflow-hidden bg-background text-foreground">
+    <div className={`relative flex min-h-dvh flex-col bg-background text-foreground ${showConversation ? 'h-dvh overflow-hidden' : ''}`}>
       {/* Hero shell: either shows the pre-call CTA or swaps in the live conversation experience. */}
       <div
         className={`flex min-h-0 flex-1 flex-col ${
@@ -225,7 +225,7 @@ export default function LandingPage() {
           className={`z-10 flex min-h-0 flex-1 flex-col ${
             showConversation
               ? 'h-full w-full max-w-none items-stretch gap-0 px-0 text-left'
-              : 'w-full max-w-none items-center justify-center px-4 text-center'
+              : 'w-full max-w-none items-center justify-center text-center'
           }`}
         >
           {!showConversation ? (
@@ -267,8 +267,8 @@ export default function LandingPage() {
       </div>
 
       {/* Persistent attribution footer for the pre-call and in-call views. */}
-      <footer className="fixed bottom-0 right-0 z-40 py-4 pr-4 md:py-6 md:pr-6">
-        <div className="flex items-center justify-end gap-2 text-muted-foreground">
+      <footer className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-t border-border px-5 py-3 sm:px-8">
+        <p className="text-xs text-muted-foreground">Hackathon demo · Fictional appointments only</p><div className="flex items-center justify-end gap-2 text-muted-foreground">
           <span className="text-xs font-medium tracking-wide uppercase">
             Powered by
           </span>

@@ -4,13 +4,11 @@ import './globals.css';
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
 };
 
 export const metadata: Metadata = {
-  title: 'Talk to your voice agent | Agora',
-  description:
-    "Next.js quickstart: real-time voice agent with live transcript, streaming audio, and low latency from Agora's Conversational AI Engine—API routes in one repo.",
+  title: 'Demo Care Clinic | Voice appointments',
+  description: 'Find a fictional appointment with Dr. Ramesh by voice. Read live transcripts and approve your booking on screen.',
   icons: {
     icon: [
       { url: '/favicon.ico' },

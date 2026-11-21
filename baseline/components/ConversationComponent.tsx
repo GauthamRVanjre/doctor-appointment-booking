@@ -21,13 +21,11 @@ import {
   type UserTranscription,
   type AgentTranscription,
 } from 'agora-agent-client-toolkit';
-import { AgentVisualizer } from 'agora-agent-uikit';
 import { MicButtonWithVisualizer } from 'agora-agent-uikit/rtc';
 import { DEFAULT_AGENT_UID } from '@/lib/agora';
 import {
   getCurrentInProgressMessage,
   getMessageList,
-  mapAgentVisualizerState,
   normalizeTimestampMs,
   normalizeTranscript,
 } from '@/lib/conversation';
@@ -99,7 +97,7 @@ export default function ConversationComponent({
   const client = useRTCClient();
   const remoteUsers = useRemoteUsers();
   const [isEnabled, setIsEnabled] = useState(true);
-  const [isAgentConnected, setIsAgentConnected] = useState(false);
+  const [, setIsAgentConnected] = useState(false);
   const [isConnectionDetailsOpen, setIsConnectionDetailsOpen] = useState(false);
 
   // Tracks granular RTC connection state for the status dot.
@@ -112,7 +110,7 @@ export default function ConversationComponent({
   const [rawTranscript, setRawTranscript] = useState<
     TranscriptHelperItem<Partial<UserTranscription | AgentTranscription>>[]
   >([]);
-  const [agentState, setAgentState] = useState<AgentState | null>(null);
+  const [, setAgentState] = useState<AgentState | null>(null);
   const [agentMetrics, setAgentMetrics] = useState<QuickstartAgentMetric[]>([]);
   const [connectionIssues, setConnectionIssues] = useState<ConnectionIssue[]>(
     [],
@@ -422,12 +420,6 @@ export default function ConversationComponent({
       : 'warning';
   }, [connectionState, connectionIssues]);
 
-  const visualizerState = useMemo(
-    () =>
-      mapAgentVisualizerState(agentState, isAgentConnected, connectionState),
-    [agentState, isAgentConnected, connectionState],
-  );
-
   /**
    * Mute/unmute via track.setEnabled() only — usePublish owns publish state.
    * If we also unpublish in the toggle, usePublish and the button fight each other
@@ -487,20 +479,7 @@ export default function ConversationComponent({
           agentUID={agentUID}
         />
       }
-      visualizer={
-        <div
-          className="relative flex h-full min-h-[20rem] w-full max-w-4xl items-center justify-center"
-          role="region"
-          aria-label="AI agent status visualization"
-        >
-          <AgentVisualizer state={visualizerState} size="lg" />
-          {remoteUsers.map((user) => (
-            <div key={user.uid} className="hidden">
-              <RemoteUser user={user} />
-            </div>
-          ))}
-        </div>
-      }
+      visualizer={<>{remoteUsers.map((user) => <RemoteUser key={user.uid} user={user} />)}</>}
       controls={
         <div
           className="mx-auto flex w-fit items-center gap-3 rounded-full border border-border bg-card/80 px-4 py-2 backdrop-blur-md"

@@ -45,19 +45,19 @@ export function QuickstartTranscriptPanel({
 
   return (
     <section
-      className="flex h-full min-h-0 w-full flex-col overflow-hidden rounded-2xl border border-border bg-card/20"
-      aria-label="Transcription panel"
+      className="flex h-full min-h-0 w-full flex-col overflow-hidden rounded-2xl border border-border bg-card/80"
+      aria-label="Live transcript"
     >
-      <div className="flex h-14 shrink-0 items-center justify-between border-b border-border px-4">
+      <div className="flex min-h-24 shrink-0 items-center justify-between border-b border-border px-5 sm:px-7">
         <div>
-          <h2 className="text-sm font-semibold text-foreground">Transcript</h2>
-          <p className="text-xs text-muted-foreground">Live voice turns</p>
+          <h2 className="text-2xl font-semibold tracking-tight text-foreground">Live transcript</h2>
+          <p className="text-xs text-muted-foreground">Your conversation appears here as you speak.</p>
         </div>
       </div>
 
       <div
         ref={scrollRef}
-        className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 py-4"
+        className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-5 sm:px-7 py-4"
       >
         {messages.length === 0 ? (
           <div className="flex h-full items-center justify-center text-center text-sm text-muted-foreground">
@@ -66,25 +66,21 @@ export function QuickstartTranscriptPanel({
         ) : (
           messages.map((message, index) => {
             const isAgent = String(message.uid) === agentUID;
-            const label = isAgent ? 'Agent' : 'You';
+            const label = isAgent ? 'Assistant' : 'You';
             const text = message.text?.trim();
             const time = formatMessageTime(message.createdAt);
 
             return (
               <article
                 key={`${message.turn_id ?? message.uid}-${index}`}
-                className={`flex flex-col ${isAgent ? 'items-start' : 'items-end'}`}
+                className={`shrink-0 rounded-2xl p-4 sm:p-5 ${isAgent ? 'bg-secondary/60' : 'bg-transparent'}`}
               >
-                <div className="mb-1 flex items-center gap-2 px-1 text-xs font-semibold text-muted-foreground">
+                <div className="mb-2 flex items-center gap-2 px-1 text-xs font-semibold text-muted-foreground">
                   <span>{label}</span>
                   {time && <span className="font-normal">{time}</span>}
                 </div>
                 <div
-                  className={`max-w-full whitespace-pre-wrap rounded-xl border px-3 py-2 text-sm leading-6 ${
-                    isAgent
-                      ? 'border-[#2f2f2f] bg-[#212121] text-[#e7e7e7]'
-                      : 'border-[#d7d7d7] bg-[#fdfcfb] text-black'
-                  }`}
+                  className="max-w-full break-words whitespace-pre-wrap text-lg leading-relaxed sm:text-xl text-foreground"
                 >
                   {text || '...'}
                 </div>

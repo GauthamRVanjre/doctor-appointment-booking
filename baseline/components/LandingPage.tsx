@@ -176,7 +176,17 @@ export default function LandingPage() {
     [agoraData],
   );
 
+  useEffect(() => {
+    if (!showConversation) return;
+    const revoke = () => { void fetch('/api/booking/session', { method: 'DELETE', keepalive: true }).catch(() => {}); };
+    window.addEventListener('pagehide', revoke);
+    return () => window.removeEventListener('pagehide', revoke);
+  }, [showConversation]);
+
   const handleEndConversation = async () => {
+    // Revoke booking authority before the existing cloud/media teardown.
+    try { await fetch('/api/booking/session', { method: 'DELETE' }); }
+    catch { console.error('Booking cleanup failed; pending approvals still expire.'); }
     // Stop the AI agent
     if (agoraData?.agentId) {
       try {

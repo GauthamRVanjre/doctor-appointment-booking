@@ -95,3 +95,29 @@ Wednesday recovery scenario needs a bookable alternative in that window.
 ## Emergency fallback / stop
 
 For obvious severe danger, stop routine scheduling and direct the patient to call 112 in India and request an ambulance for emergency care (local emergency number elsewhere). Do not diagnose or recommend waiting for an appointment. Trusted conversation context clears pending approval and blocks further booking in that session; no saved booking is deleted. This is emergency redirection, distinct from database rollback. Keyword checks and server guards are tested; spoken enforcement remains Milestone 4. Official reference: https://www.mha.gov.in/emergency-response-support-system-erss .
+
+
+## Milestone 4 implementation update (2026-11-20)
+
+Implemented clinic persona, three managed HTTPS tool adapters, separate browser/
+tool session capabilities, cookie-bound review/confirmation, server-confirmed card,
+commit-before-confirmation speech, observed-history emergency guards and booking
+cleanup. The user explicitly accepted on-screen approval: voice selects and reads
+back, then a patient click authorizes saving. Spoken yes alone does not save.
+This is a deliberate change from the planned spoken-only approval sequence above.
+
+The gateway permits only authenticated booking-tool requests, keeping starter
+UI/token/start/stop routes off the public forwarding path. No tunnel or deployment
+has been activated. Live Agora tool execution, audible readback/success, emergency
+behavior and reliable End Conversation remain unverified. History polling can lag
+speech; do not claim immediate emergency detection or verified playback completion.
+See baseline/docs/voice-to-action.md for full trust boundaries and runbook.
+
+Verification: full pnpm run verify passed for this implementation, including the
+production build outside the sandbox. Local HTTP gateway allowlist/body-size/
+forwarding checks also passed. These are automated/local-boundary results, not
+evidence of a working live voice-to-booking session.
+
+Preserve the future-scope deck wording: “The prototype completes a booking against
+a local scheduling system. Next, we’ll connect clinic calendars through authenticated
+tools or MCP, while preserving explicit patient approval and reliable booking records.”

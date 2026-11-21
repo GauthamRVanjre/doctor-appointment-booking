@@ -25,3 +25,22 @@
 # Local planning notes and milestone evidence
 /MILESTONE-*.md
 /FUTURE-SCOPE.md
+
+# Local agent instructions and implementation-planning material
+/baseline/AGENTS.md
+/baseline/CLAUDE.md
+/baseline/docs/ai/
+/baseline/docs/deployment-checklist.md
+/baseline/docs/deployment-readiness.md
+/baseline/docs/vercel-storage-proposal.md
+
+# Unused upstream contributor, container and workflow material
+/baseline/CONTRIBUTING.md
+/baseline/Dockerfile
+/baseline/.dockerignore
+/baseline/.github/
+/baseline/system-architecture.svg
+/baseline/system-architecture-dark.svg
+
+# OS metadata
+**/.DS_Store

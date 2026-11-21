@@ -1,3 +1,5 @@
+Milestone 4 extension: [voice-to-action.md](voice-to-action.md) specifies the implemented HTTP/Agora boundary. Schema and service contracts below are unchanged. User-approved on-screen confirmation is the authorization authority, not model flags or spoken yes. prepare_selection/approve remain internal trusted seams; bookAppointment only requests review until an on-screen commit has occurred. Live tool/voice verification requires an authorized tools-only HTTPS tunnel.
+
 # Milestone 3: local booking contract
 
 Agreed two-table design, specified before implementation (2026-11-20).

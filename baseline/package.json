@@ -14,7 +14,9 @@
     "lint": "eslint .",
     "verify:api": "node --import tsx scripts/verify-api-contracts.ts",
     "typecheck": "tsc --noEmit",
-    "verify": "pnpm run doctor && pnpm run lint && pnpm run typecheck && pnpm run verify:api && pnpm run verify:booking && pnpm run build",
+    "verify": "pnpm run doctor && pnpm run lint && pnpm run typecheck && pnpm run verify:api && pnpm run verify:booking && pnpm run verify:voice && pnpm run build",
+    "verify:voice": "node --import tsx scripts/verify-voice.ts",
+    "booking:gateway": "node scripts/booking-gateway.mjs",
     "verify:booking": "node --import tsx scripts/verify-booking.ts"
   },
   "dependencies": {

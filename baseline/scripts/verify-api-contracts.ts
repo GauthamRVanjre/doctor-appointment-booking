@@ -1,3 +1,5 @@
+import { VoiceSessions } from '../lib/booking/voice-session';
+import { BookingService } from '../lib/booking/service';
 import { AgoraClient, Agent } from 'agora-agents';
 import { RtcTokenBuilder } from 'agora-token';
 import { NextRequest } from 'next/server';
@@ -15,6 +17,12 @@ function getJson(response: Response) {
 process.env.NEXT_PUBLIC_AGORA_APP_ID = '0123456789abcdef0123456789abcdef';
 process.env.NEXT_AGORA_APP_CERTIFICATE = 'fedcba9876543210fedcba9876543210';
 process.env.MURF_API_KEY = 'test-murf-key';
+process.env.BOOKING_TOOLS_BASE_URL = 'https://tools.example.test';
+// Keep route tests off the real clinic database.
+
+
+const apiBooking = new BookingService(':memory:');
+(globalThis as typeof globalThis & { clinicVoiceSessions?: InstanceType<typeof VoiceSessions> }).clinicVoiceSessions = new VoiceSessions(apiBooking);
 
 async function verifyGenerateAgoraTokenRoute() {
   const { GET: generateAgoraToken } =
@@ -360,7 +368,8 @@ async function verifyInviteAgentSuccess() {
     if (capturedTts?.vendor === 'murf') {
       assert(capturedTts.params.model === 'FALCON', 'Murf must use Falcon');
       assert(capturedTts.params.api_key === 'test-murf-key', 'Murf key must reach the server SDK');
-      assert(capturedTts.params.voiceId === 'Miles', 'Use the selected customer-support voice');
+      assert(capturedTts.params.voiceId === 'Anisha', 'Use the selected Anisha voice');
+      assert(capturedTts.params.locale === 'en-IN', 'Anisha uses Indian English');
       assert(capturedTts.params.sample_rate === 24000, 'Murf sample rate must be 24 kHz');
     }
     assert(!JSON.stringify(body).includes('test-murf-key'), 'Invite response must not expose the Murf key');

@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { AgoraClient, Area } from 'agora-agents';
+import { localRequest, browserSession } from '@/lib/booking/http';
+import { voiceSessions } from '@/lib/booking/voice-session';
 import { StopConversationRequest } from '@/types/conversation';
 
 function isAgentAlreadyStoppingOrStopped(error: unknown): boolean {
@@ -24,6 +26,7 @@ function isAgentAlreadyStoppingOrStopped(error: unknown): boolean {
 
 export async function POST(request: Request) {
   try {
+    if (!localRequest(request)) return NextResponse.json({ error: 'Local access only.' }, { status: 403 });
     const body: StopConversationRequest = await request.json();
     const { agent_id } = body;
 
@@ -32,6 +35,12 @@ export async function POST(request: Request) {
         { error: 'agent_id is required' },
         { status: 400 },
       );
+    }
+
+    const owned = browserSession(request);
+    if (owned) {
+      if (owned.agentId !== agent_id) return NextResponse.json({ error: 'Session mismatch.' }, { status: 403 });
+      voiceSessions().end(owned);
     }
 
     const appId = process.env.NEXT_PUBLIC_AGORA_APP_ID;

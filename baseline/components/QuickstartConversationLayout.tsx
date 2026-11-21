@@ -3,6 +3,7 @@
 import type { ReactNode } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import { BookingCard } from './BookingCard';
 
 type QuickstartConversationLayoutProps = {
   statusPanel: ReactNode;
@@ -34,7 +35,7 @@ export function QuickstartConversationLayout({
           />
           <div className="flex min-w-0 flex-col justify-center gap-1">
             <span className="truncate text-lg font-semibold leading-none tracking-[-0.025em] text-foreground">
-              Agora Conversational AI
+              Demo Care Clinic
             </span>
             {pipelineMetrics}
           </div>
@@ -65,6 +66,7 @@ export function QuickstartConversationLayout({
             <div className="flex min-h-0 flex-1 items-center justify-center">
               {visualizer}
             </div>
+            <BookingCard />
             <div className="shrink-0 pt-4">{controls}</div>
           </div>
         </main>

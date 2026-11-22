@@ -37,7 +37,7 @@ export function ConnectionStatusPanel({
       {/* Minimal status affordance: color and ping convey RTC health before the user opens details. */}
       <button
         type="button"
-        className="relative block"
+        className="relative flex min-h-9 items-center gap-2 rounded-full px-2 text-xs font-medium"
         aria-label={getConnectionLabel(connectionState, connectionSeverity)}
         aria-expanded={isOpen}
         aria-controls="connection-details-panel"
@@ -65,6 +65,7 @@ export function ConnectionStatusPanel({
             }`}
           />
         </span>
+        <span>{getConnectionLabel(connectionState, connectionSeverity)}</span>
       </button>
 
       {/* Expandable detail panel: current RTC state plus the captured agent/RTM issues. */}

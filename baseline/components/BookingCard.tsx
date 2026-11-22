@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { CalendarDays } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 type State = {
@@ -37,8 +38,8 @@ export function BookingCard() {
     } catch { setError('Outcome unknown. Retry confirmation to retrieve the same saved booking.'); }
     finally { setBusy(false); }
   };
-  return <section aria-label="Booking review" aria-live="polite" className="mx-auto w-full max-w-xl shrink-0 rounded-xl border border-border bg-card p-4 text-sm">
-    <h2 className="mb-2 font-semibold">{state.saved ? 'Saved booking' : 'Appointment review'}</h2>
+  return <section aria-label="Booking review" aria-live="polite" className="mx-auto w-full max-w-xl shrink-0 rounded-2xl border border-border bg-card/80 p-6 text-sm">
+    <h2 className="mb-5 text-xl font-semibold tracking-tight">{state.saved ? 'Saved booking' : 'Appointment review'}</h2>
     {state.saved && <div className="space-y-1">
       <p>{state.saved.doctor.doctorName} · {state.saved.doctor.clinicName}</p>
       <p>{new Intl.DateTimeFormat('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'full', timeStyle: 'short' }).format(new Date(state.saved.slot.starts_at))} · Asia/Kolkata</p>
@@ -49,7 +50,7 @@ export function BookingCard() {
       <p>{state.pending.readback}</p>
       <p className="text-xs text-muted-foreground">Review these exact details. Clicking confirms and saves this fictional booking. Spoken “yes” alone does not save. New speech requires fresh review.</p>
       <Button onClick={confirm} disabled={busy || !state.ok || Date.parse(state.pending.expires_at) <= Date.now()}>{busy ? 'Saving…' : 'I approve — save booking'}</Button>
-    </div> : !state.saved && <p className="text-muted-foreground">Choose an available slot with the voice assistant. Review and approve here before it is saved.</p>}
+    </div> : !state.saved && <div className="py-8 text-center"><CalendarDays aria-hidden="true" className="mx-auto mb-5 h-12 w-12 text-primary/50" /><p className="text-base font-medium">Your appointment details will appear here.</p><p className="mt-3 text-sm leading-6 text-muted-foreground">Choose a time with the assistant, then review and approve before saving.</p></div>}
     {state.message && !state.emergency && <p role="status">{state.message}</p>}
     {state.notice && <p className="mt-2 text-xs text-muted-foreground">{state.notice}</p>}
     {error && <p role="alert" className="mt-2 text-destructive">{error}</p>}

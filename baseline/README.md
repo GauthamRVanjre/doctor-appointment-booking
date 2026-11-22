@@ -137,6 +137,12 @@ See [the Postgres contract](docs/postgres-contract.md) and
 
 ## Design references and attribution
 
+The clinic UI uses the approved local UI branch's cream/green theme, self-hosted
+Manrope fonts, transcript-focused call layout and explicit booking review card.
+Only presentation components and assets were transferred; the deployed Postgres
+backend, session ownership, approval boundary and public-demo limits remain.
+The Manrope font license is included under public/fonts/Manrope-OFL.txt.
+
 - [Booking schema and guarantees](docs/booking-contract.md)
 - [Voice implementation, approval boundary and runtime limits](docs/voice-to-action.md)
 - Based on the [official Agora Next.js quickstart](https://github.com/AgoraIO-Conversational-AI/agent-quickstart-nextjs).

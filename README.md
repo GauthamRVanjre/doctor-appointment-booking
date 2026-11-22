@@ -62,11 +62,56 @@ calendar days, excluding past starts and already-booked slots.
 | Hosting | Vercel |
 | Local demo storage | Node.js built-in SQLite |
 
-The Next.js server connects the agent's tools to availability and booking
-services. The deployed implementation stores slots, bookings and conversation
-session authority in Postgres to support requests across application instances.
-The server validates approval and commits the booking transaction before
-returning confirmation.
+## Architecture
+
+```mermaid
+flowchart LR
+    Browser["Browser: voice, transcript and booking review"]
+    Agora["Agora Conversational AI"]
+    Murf["Murf Falcon TTS"]
+    API["Next.js API on Vercel"]
+    DB[("Supabase Postgres")]
+
+    Browser <-->|"Voice and transcript"| Agora
+    Agora -->|"Speech synthesis"| Murf
+    Agora <-->|"Authenticated booking tools"| API
+    Browser <-->|"Session, review and approval"| API
+    API <-->|"Slots, bookings and session state"| DB
+```
+
+Agora handles the conversation using managed speech recognition and language
+model services, with Murf generating the assistant's speech. The agent calls
+server-side tools to look up doctors, check availability and prepare a booking
+for review. The browser submits explicit approval to the Next.js API; the
+server validates it and commits the booking before returning confirmation.
+
+## Engineering decisions
+
+### Keep approval outside the language model
+
+The agent can propose an appointment, but it cannot authorize saving one.
+Approval is bound to a specific selection and session, expires after two
+minutes, and is invalidated when new user speech is observed. This adds an
+on-screen step to the voice flow so a spoken response or model-generated flag
+cannot independently authorize a database write.
+
+### Persist session authority alongside bookings
+
+Vercel requests can run in different application instances, so process-local
+approval state cannot coordinate the deployed flow. Postgres stores session
+ownership, pending review, expiry and emergency-stop state alongside slots and
+bookings. This requires database access for session checks, but keeps authority
+consistent across instances. SQLite remains available for a single-process
+local demo.
+
+### Commit once, then confirm
+
+The server locks the session and slot during the booking transaction, validates
+the approval and uses a unique slot constraint as the final double-booking
+guard. Idempotency checks recognize retries without creating another booking.
+The booking and saved session metadata commit together before confirmation is
+attempted. If confirmation speech fails, the committed appointment remains
+saved; speech delivery and database persistence are separate outcomes.
 
 ## Development
 
@@ -90,12 +135,15 @@ pnpm run dev
 
 Open [localhost:3000](http://localhost:3000).
 
-The merged deployment implementation uses server-only `DATABASE_URL` and
-`BOOKING_APPROVAL_SECRET` settings for Postgres and durable approval state.
-Hosted operation also uses `BOOKING_APP_ORIGIN`, `BOOKING_TOOLS_BASE_URL` and
-`BOOKING_PUBLIC_DEMO`. Set both origin settings to the deployed HTTPS origin,
-without a trailing slash. The older SQLite demo branch runs with local disk
-and process-local session authority.
+For Postgres-backed development, configure server-only `DATABASE_URL` and
+`BOOKING_APPROVAL_SECRET` values. Without `DATABASE_URL`, local development uses
+SQLite and process-local session authority; deployed operation requires Postgres.
+
+For hosted operation, set `BOOKING_APP_ORIGIN` and `BOOKING_TOOLS_BASE_URL` to
+the deployed HTTPS origin without a trailing slash, and enable
+`BOOKING_PUBLIC_DEMO` to permit demo startup. See the
+[environment template](baseline/env.local.example) for the configuration names
+and the [application guide](baseline/README.md) for operational details.
 
 ## Verification
 
@@ -107,8 +155,8 @@ pnpm run verify:voice
 pnpm run verify
 ```
 
-The merged Postgres implementation also provides `pnpm run verify:postgres`,
-an opt-in integration check requiring a configured demo database. It creates
+`pnpm run verify:postgres` is an opt-in integration check requiring a configured
+demo database. It creates
 synthetic records and removes its own records afterward.
 
 Automated checks cover booking and session boundaries. Audible voice delivery

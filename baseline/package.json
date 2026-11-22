@@ -17,8 +17,7 @@
     "verify": "pnpm run doctor && pnpm run lint && pnpm run typecheck && pnpm run verify:api && pnpm run verify:booking && pnpm run verify:voice && pnpm run build",
     "verify:voice": "node --import tsx scripts/verify-voice.ts",
     "booking:gateway": "node scripts/booking-gateway.mjs",
-    "verify:booking": "node --import tsx scripts/verify-booking.ts",
-    "verify:postgres": "node --env-file=.env.local --import tsx scripts/verify-postgres.ts"
+    "verify:booking": "node --import tsx scripts/verify-booking.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "^3.0.39",
@@ -37,7 +36,6 @@
     "clsx": "^2.1.1",
     "lucide-react": "^0.454.0",
     "next": "^16.2.6",
-    "pg": "8.23.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwind-merge": "^2.6.0",
@@ -45,7 +43,6 @@
   },
   "devDependencies": {
     "@types/node": "^22.10.6",
-    "@types/pg": "8.23.1",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "eslint": "^9.39.4",

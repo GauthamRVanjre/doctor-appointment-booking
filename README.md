@@ -12,9 +12,8 @@ The Next.js application is in [`baseline/`](baseline/). See its
 - Local booking demo implemented with SQLite persistence.
 - Agora Conversational AI with Murf Falcon TTS, voice Anisha.
 - On-screen approval is required; spoken yes alone does not save.
-- Supabase Postgres is hosted in Mumbai; durable booking/session routes are
-  implemented. Vercel release controls and deployed voice verification remain.
-  No live deployed application URL is available yet.
+- Vercel + Supabase is the selected deployment target; migration and deployment
+  are pending. No live deployed application URL is available yet.
 
 Only fictional appointments and aliases are supported. This prototype does not
 diagnose, provide medical advice or connect to a real clinic calendar.

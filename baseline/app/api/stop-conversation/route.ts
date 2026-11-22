@@ -37,11 +37,10 @@ export async function POST(request: Request) {
       );
     }
 
-    const owned = await browserSession(request);
-    if (!owned) return NextResponse.json({ error: 'Session ownership required.' }, { status: 401 });
+    const owned = browserSession(request);
     if (owned) {
       if (owned.agentId !== agent_id) return NextResponse.json({ error: 'Session mismatch.' }, { status: 403 });
-      await voiceSessions().end(owned);
+      voiceSessions().end(owned);
     }
 
     const appId = process.env.NEXT_PUBLIC_AGORA_APP_ID;
@@ -69,12 +68,14 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ success: true });
-  } catch {
-    console.error('Conversation stop failed.');
+  } catch (error) {
+    console.error('Error stopping conversation:', error);
     return NextResponse.json(
       {
         error:
-          'Failed to stop conversation',
+          error instanceof Error
+            ? error.message
+            : 'Failed to stop conversation',
       },
       { status: 500 },
     );

@@ -108,7 +108,6 @@ type ConversationErrorCardProps = {
 
 export function ConversationErrorCard({ issue }: ConversationErrorCardProps) {
   const normalizedMessage = getNormalizedMessage(issue);
-  const showNormalizedMessage = normalizedMessage !== issue.message;
   const cta = getCta(issue);
   const transportCode = String(issue.code);
   const showRaw = issue.message !== normalizedMessage;
@@ -119,7 +118,7 @@ export function ConversationErrorCard({ issue }: ConversationErrorCardProps) {
       <div className="font-medium text-destructive">
         Conversation AI Engine Error: {transportCode}
       </div>
-      {showNormalizedMessage && <div className="text-foreground">{normalizedMessage}</div>}
+      {normalizedMessage && <div className="text-foreground">{normalizedMessage}</div>}
       {cta && <div className="text-[11px] text-destructive/90">{cta}</div>}
       {showRaw && (
         <div className="mt-2 border-t border-destructive/20 pt-2 text-muted-foreground break-words">

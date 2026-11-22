@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { AgoraClient, Area } from 'agora-agents';
+import { localRequest, browserSession } from '@/lib/booking/http';
+import { voiceSessions } from '@/lib/booking/voice-session';
 import { StopConversationRequest } from '@/types/conversation';
 
 function isAgentAlreadyStoppingOrStopped(error: unknown): boolean {
@@ -24,6 +26,7 @@ function isAgentAlreadyStoppingOrStopped(error: unknown): boolean {
 
 export async function POST(request: Request) {
   try {
+    if (!localRequest(request)) return NextResponse.json({ error: 'Local access only.' }, { status: 403 });
     const body: StopConversationRequest = await request.json();
     const { agent_id } = body;
 
@@ -32,6 +35,13 @@ export async function POST(request: Request) {
         { error: 'agent_id is required' },
         { status: 400 },
       );
+    }
+
+    const owned = await browserSession(request);
+    if (!owned) return NextResponse.json({ error: 'Session ownership required.' }, { status: 401 });
+    if (owned) {
+      if (owned.agentId !== agent_id) return NextResponse.json({ error: 'Session mismatch.' }, { status: 403 });
+      await voiceSessions().end(owned);
     }
 
     const appId = process.env.NEXT_PUBLIC_AGORA_APP_ID;
@@ -59,14 +69,12 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Error stopping conversation:', error);
+  } catch {
+    console.error('Conversation stop failed.');
     return NextResponse.json(
       {
         error:
-          error instanceof Error
-            ? error.message
-            : 'Failed to stop conversation',
+          'Failed to stop conversation',
       },
       { status: 500 },
     );

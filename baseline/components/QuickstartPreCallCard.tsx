@@ -1,55 +1,15 @@
-'use client';
-
-import { Loader2 } from 'lucide-react';
+ 'use client';
+import { ArrowRight, Loader2, Mic } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
-type QuickstartPreCallCardProps = {
-  isLoading: boolean;
-  error: string | null;
-  onStartConversation: () => void;
-};
-
-export function QuickstartPreCallCard({
-  isLoading,
-  error,
-  onStartConversation,
-}: QuickstartPreCallCardProps) {
-  return (
-    <div
-      className="mx-auto flex w-[min(92vw,26.25rem)] animate-fade-up flex-col items-center rounded-[20px] border border-[#2b2b2b] px-10 py-10 text-center shadow-[0_10px_24px_rgba(0,0,0,0.28)]"
-      style={{
-        backgroundImage:
-          'linear-gradient(164.988deg, rgba(54,54,54,0.2) 1.0596%, rgba(0,0,0,0) 96.089%), linear-gradient(90deg, rgb(16,16,16) 0%, rgb(16,16,16) 100%)',
-      }}
-    >
-      <h1 className="text-[28px] font-medium leading-[1.2] text-white">
-        Try Agora&apos;s Voice Agent
-      </h1>
-      <p className="mt-[14px] text-sm font-medium leading-6 text-muted-foreground">
-        Built on Agora&apos;s flagship Conversational AI engine, for effortless
-        agentic conversations.
-      </p>
-
-      <Button
-        onClick={onStartConversation}
-        disabled={isLoading}
-        className="mt-12 h-10 w-full rounded-lg border border-primary bg-primary text-sm font-medium text-black hover:border-white hover:bg-white hover:text-black disabled:hover:border-primary disabled:hover:bg-primary disabled:hover:text-black"
-        aria-label={
-          isLoading
-            ? 'Starting conversation with AI agent'
-            : 'Start conversation with AI agent'
-        }
-      >
-        {isLoading ? (
-          <>
-            <Loader2 className="h-4 w-4 animate-spin" />
-            Starting...
-          </>
-        ) : (
-          'Start Conversation'
-        )}
-      </Button>
-      {error && <p className="mt-3 text-xs text-destructive">{error}</p>}
-    </div>
-  );
+import { ClinicBrand } from './ClinicBrand';
+type Props = { isLoading: boolean; error: string | null; onStartConversation: () => void };
+export function QuickstartPreCallCard({isLoading, error, onStartConversation}: Props) {
+ return <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-5 sm:px-10 lg:px-14">
+ <header className="flex items-center justify-between gap-4 border-b border-border py-6 sm:py-8"><ClinicBrand /><span className="hidden items-center gap-2 rounded-full bg-secondary px-4 py-2 text-xs font-medium sm:flex"><Mic size={14}/>Voice appointment assistant</span></header>
+ <main className="grid flex-1 items-center gap-10 py-12 md:grid-cols-[1.2fr_1fr] md:gap-12 lg:py-20">
+ <div className="animate-fade-up text-left"><p className="mb-5 text-xs font-bold uppercase tracking-[0.18em] text-primary">Less typing. More talking.</p><h1 className="max-w-2xl text-4xl font-semibold leading-[1.12] tracking-[-0.045em] sm:text-5xl lg:text-[60px]">Your next appointment, a conversation away.</h1><p className="mt-6 max-w-lg text-base leading-7 text-muted-foreground sm:text-lg">Talk to our assistant to find a time with Dr. Ramesh. Review the details before you confirm.</p>
+ <Button onClick={onStartConversation} disabled={isLoading} className="mt-8 h-14 gap-3 rounded-xl px-7 text-base font-semibold shadow-sm">{isLoading ? <Loader2 className="h-5 w-5 animate-spin"/> : <Mic className="h-5 w-5"/>}{isLoading ? 'Starting conversation…' : 'Start conversation'}{!isLoading && <ArrowRight className="ml-2 h-4 w-4"/>}</Button><p className="mt-3 text-xs text-muted-foreground">Microphone access required</p>{error && <p role="alert" className="mt-3 text-sm text-destructive">{error}</p>}
+ <div className="mt-10 flex flex-wrap items-center gap-5 text-sm" aria-label="Booking steps">{['Talk','Review','Confirm'].map((s,i)=><span key={s} className="flex items-center gap-2"><span className="font-bold text-primary">0{i+1}</span>{s}{i<2 && <span aria-hidden="true" className="ml-3 h-px w-5 bg-border"/>}</span>)}</div></div>
+ <div className="animate-fade-up rounded-3xl border border-border bg-card/70 px-6 pb-6 pt-8 shadow-sm sm:px-8"><div aria-hidden="true" className="care-orb mx-auto h-44 w-44 sm:h-56 sm:w-56"/><p className="mt-3 text-center text-xl font-semibold tracking-tight">Ready when you are</p><div aria-hidden="true" className="my-6 flex h-9 items-center justify-center gap-1.5">{[5,9,16,12,25,34,20,12,18,9,5].map((h,i)=><span key={i} style={{height:h}} className="w-1 rounded-full bg-primary/50"/>)}</div><div className="flex items-center gap-4 border-t border-border pt-5 text-left"><span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-secondary text-sm font-bold">DR</span><div><p className="font-semibold">Dr. Ramesh</p><p className="mt-1 text-sm text-muted-foreground">General physician · 30 min</p></div></div></div>
+ </main></div>;
 }

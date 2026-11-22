@@ -10,9 +10,9 @@ function fail(message) {
   process.exit(1);
 }
 
-const majorVersion = Number.parseInt(process.versions.node.split('.')[0], 10);
-if (Number.isNaN(majorVersion) || majorVersion < 22) {
-  fail(`Node.js 22 or newer is required. Current version: ${process.versions.node}`);
+const [majorVersion, minorVersion] = process.versions.node.split('.').map(Number);
+if (Number.isNaN(majorVersion) || majorVersion < 24 || (majorVersion === 24 && minorVersion < 10)) {
+  fail(`Node.js 24.10 or newer is required for local SQLite booking. Current version: ${process.versions.node}`);
 }
 
 if (!process.env.npm_config_user_agent?.includes('pnpm')) {
